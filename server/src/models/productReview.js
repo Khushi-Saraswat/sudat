@@ -13,10 +13,6 @@ const userReview = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        productVariantId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "ProductVariant",
-        },
         rating: {
             type: Number,
             required: true,

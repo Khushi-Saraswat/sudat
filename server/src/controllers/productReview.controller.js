@@ -5,7 +5,6 @@ import UserReview from "../models/productReview.js";
 export const getReviewsByProductId = async(req,res)=>{
     try {
         const {id} = req.params;
-        const { color } = req.query;
 
         if(!id){
             return res.status(400).json({
@@ -13,11 +12,8 @@ export const getReviewsByProductId = async(req,res)=>{
                 message: "Missing product id."
             })
         }
-        const all_reviews = await UserReview.find({productId:id}).populate("productVariantId");
-        console.log(all_reviews[0].productVariantId.color.toLowerCase());
-        
-        const reviews = all_reviews.filter(({productVariantId})=>productVariantId.color.toLowerCase()===color.toLowerCase());
-        if(!reviews){
+        const all_reviews = await UserReview.find({productId:id}).limit(5)
+        if(!all_reviews){
              return res.status(400).json({
                 success: false,
                 message: "No reviews found"
@@ -36,33 +32,25 @@ export const getReviewsByProductId = async(req,res)=>{
 }
 export const postReview = async (req, res) => {
     try {
-        const { productId, color, rating, review } = req.body;
-        if (!productId || !color || !rating || !review) {
+        const { productId, rating, review } = req.body;
+        if (!productId  || !rating || !review) {
             return res.status(400).json({
                 success: false,
                 message: "Missing parameter."
             })
         }
-        const product = await Product.findById(productId).populate('variants');
+        const product = await Product.findById(productId)
         if (!product) {
             return res.status(400).json({
                 success: false,
                 message: "Invalide product id"
             })
         }
-        const variant = product.variants.find((v) => v.color.toLowerCase() === color.toLowerCase());
-        if (!variant) {
-            return res.status(400).json({
-                success: false,
-                message: "Color variant not found with respective color"
-            })
-        }
         const newreview = await UserReview.create({
             productId,
             userId: req.user.userId,
             rating,
-            review,
-            productVariantId: variant._id
+            review
         })
         return res.status(201).json({
             success: true,
@@ -148,4 +136,4 @@ export const deleteReview = async (req, res) => {
             message: `Internal server error: ${error}`
         })
     }
-}
+} 

@@ -24,6 +24,10 @@ const cartItemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    thumbnail: {
+      type: String,
+      required: true,
+    }
   },
   { _id: false }
 );
@@ -43,5 +47,5 @@ const userCartSchema = new mongoose.Schema(
   }
 );
 
-const UserCart = mongoose.model('UserCart', userCartSchema);  
+const UserCart = mongoose.model('UserCart', userCartSchema);
 export default UserCart;

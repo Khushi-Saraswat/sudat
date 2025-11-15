@@ -68,11 +68,9 @@ const productSchema = new mongoose.Schema(
     thumbnail: {
       url: {
         type: String,
-        required: true,
       },
       public_id: {
         type: String,
-        required: true,
       }
     },
     images: [
@@ -89,6 +87,14 @@ const productSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    color:{
+      type: String,
+      default: '',
+    },
+    price: {
+      type: Number,
+      require:true
     },
   },
   { timestamps: true }

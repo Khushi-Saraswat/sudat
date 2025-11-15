@@ -6,12 +6,7 @@ export const getProducts = async (req, res) => {
     const products = await Product.find({
       isActive: true,
     })
-      .select("title price description")
-      .populate({
-        path: 'variants',
-        match: { isDefault: true },
-        populate: { path: 'images', model: 'ProductImage' }
-      })
+      .select("title price description price thumbnail")
       .limit(10)
 
     // Fetch primary image for each product
@@ -95,7 +90,7 @@ export const searchProducts = async (req, res) => {
           fabric: 1,
           work: 1,
           discountPercentage: 1,
-          variants: 1,
+          thumbnail: 1,
           score: { $meta: "searchScore" }
         }
       }

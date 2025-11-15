@@ -1,8 +1,9 @@
 import express from 'express';
 import { authMiddleware } from '../middlewares/auth.js';
 import { getProductById, getProducts, searchProducts } from '../controllers/product-buyers.controller.js';
-import { createProduct, getStoreProducts } from '../controllers/product-admin.controller.js';
+import { addVariant, createProduct, deleteProduct, getStoreProducts, uploadMedia } from '../controllers/product-admin.controller.js';
 import { sellerMiddleware } from '../middlewares/seller.js';
+import { upload } from '../config/multer.js';
 
 
 const router = express.Router();
@@ -12,7 +13,11 @@ router.get('/search', searchProducts);
 router.get('/:id', getProductById);
 
 //seller routes
-router.post('/', sellerMiddleware, createProduct);
 router.get('/store',sellerMiddleware, getStoreProducts);
+router.post('/', sellerMiddleware, createProduct);
+router.post("/upload/:productId",sellerMiddleware,upload.array("images", 5), uploadMedia);
+router.post('/variants',sellerMiddleware, addVariant);
+router.delete('/:productId',sellerMiddleware, deleteProduct);
+
 
 export default router;

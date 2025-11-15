@@ -30,22 +30,13 @@ export const createUserCart = async (req, res) => {
 
 export const addToCart = async (req, res) => {
   try {
-    const { productId, quantity, color } = req.body;
+    const { productId, quantity } = req.body;
     const userId = req.user.userId;
-    console.log(req.user);
 
-    const product = await Product.findById(productId).populate("variants");
+    const product = await Product.findById(productId)
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
-    }
-
-    const variant = product.variants.find(
-      (item) => item.color.toLowerCase() === color.toLowerCase()
-    );
-
-    if (!variant) {
-      return res.status(404).json({ message: "Variant not found" });
     }
 
     let userCart = await UserCart.findOne({ userId });
@@ -58,8 +49,9 @@ export const addToCart = async (req, res) => {
       userCart.products.push({
         productId,
         quantity,
-        unitPrice: variant.price,
-        color: variant.color,
+        unitPrice: product.price,
+        color: product.color,
+        thumbnail: product.thumbnail.url
       });
     } else {
       userCart.products[index].quantity += quantity; // increment quantity
@@ -282,7 +274,7 @@ export const mergeCart = async (req, res) => {
     let userCart = await UserCart.findOne({ userId });
 
     for (let item of cartItems) {
-      const product = await Product.findById(item.productId).populate("variants");
+      const product = await Product.findById(item.productId)
 
       if (!product) {
         return res.status(404).json({
@@ -297,23 +289,12 @@ export const mergeCart = async (req, res) => {
           message: `Invalid quantity for product id: ${product._id}`,
         });
       }
-
-      const variant = product.variants.find(
-        (v) => v.color.toLowerCase() === item.color.toLowerCase()
-      );
-
-      if (!variant) {
-        return res.status(400).json({
-          success: false,
-          message: `Variant with color ${item.color} not found for product ${product._id}`,
-        });
-      }
-
       userCart.products.push({
         productId: product._id,
-        unitPrice: variant.price,
+        unitPrice: product.price,
         quantity: item.quantity,
-        color: variant.color,
+        color: product.color,
+        thumbnail: product.thumbnail
       });
     }
 
@@ -340,7 +321,7 @@ export const validateCart = async (req, res) => {
 
     const validationResults = []; 
     for (const item of userCart.products) {
-      const product = await Product.findById(item.productId).populate("variants");
+      const product = await Product.findById(item.productId)
       if (!product) {
         validationResults.push({
           productId: item.productId,
@@ -349,20 +330,20 @@ export const validateCart = async (req, res) => {
         });
         continue;
       }
-      const variant = product.variants.find(v => v.color.toLowerCase() === item.color.toLowerCase());
-      if (!variant) {
+      // const variant = product.variants.find(v => v.color.toLowerCase() === item.color.toLowerCase());
+      // if (!variant) {
+      //   validationResults.push({
+      //     productId: item.productId,
+      //     valid: false,
+      //     message: "Variant not found"
+      //   });
+      //   continue;
+      // }
+      if (product.stock < item.quantity) {
         validationResults.push({
           productId: item.productId,
           valid: false,
-          message: "Variant not found"
-        });
-        continue;
-      }
-      if (variant.stock < item.quantity) {
-        validationResults.push({
-          productId: item.productId,
-          valid: false,
-          message: `Only ${variant.stock} items in stock`
+          message: `Only ${product.stock} items in stock`
         });
         continue;
       }

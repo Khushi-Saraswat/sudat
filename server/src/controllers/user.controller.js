@@ -3,7 +3,6 @@ import Address from '../models/Address.js';
 import User from '../models/user.js';
 import { sendOTP } from '../utils/sendOtp.js';
 
-
  // Replace with your secret key
 
 

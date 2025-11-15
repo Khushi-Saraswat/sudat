@@ -15,10 +15,10 @@ const orderItemSchema = new mongoose.Schema({
     ref: "Product",
     required: true,
   },
-  variantId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ProductVariant",
-  },
+  // variantId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "ProductVariant",
+  // },
   quantity: { type: Number, required: true, min: 1 },
   price: { type: Number, required: true }, // price per item
   color: {

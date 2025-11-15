@@ -11,9 +11,8 @@ const productImageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    variantId:{
-       type: mongoose.Schema.Types.ObjectId,
-      ref: 'ProductVariant', // references the Product model
+    public_id: {
+      type: String,
       required: true,
     },
     altText: {

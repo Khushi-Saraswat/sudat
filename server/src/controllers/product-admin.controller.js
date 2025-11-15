@@ -4,6 +4,7 @@ import ProductImage from '../models/productImage.js';
 import ProductVariant from '../models/productVariants.js';
 import Store from '../models/store.js';
 import mongoose from 'mongoose';
+import cloudinary from '../config/cloudinary.js';
 
 // 06-11-25 test this api and create add prodcut as a variant api
 
@@ -20,9 +21,10 @@ export const createProduct = async (req, res) => {
       work,
       type,
       tags = [],
-      images = [],
       storeId,
-      stock
+      stock,
+      color,
+      price
     } = req.body;
     const user = req.user;
 
@@ -41,12 +43,12 @@ export const createProduct = async (req, res) => {
 
     // Create Product
     const newProduct = await Product.create(
-      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock }],
+      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price }],
       { session }
     );
 
     // Handle tags
-     const tagIds = await Promise.all(
+    const tagIds = await Promise.all(
       tags.map(async (tagName) => {
         let tag = await Tag.findOne({ name: tagName.trim().toLowerCase() }).session(session);
         if (!tag) {
@@ -59,35 +61,10 @@ export const createProduct = async (req, res) => {
         return tag._id;
       })
     );
-    let thumbnail = "";
-    // Create images
-    const imageIds = await Promise.all(
-      images.map(async (image) => {
-        if(image.isPrimary){
-          thumbnail = image.url;
-        }
-        const [newImage] = await ProductImage.create(
-          [
-            {
-              productId: newProduct[0]._id,
-              url: image.url,
-              altText: image.altText || '',
-              isPrimary: image.isPrimary || false,
-            },
-          ],
-          { session }
-        );
-        return newImage._id;
-      })
-    );
 
     // Link variant and tags to product
     newProduct[0].tags = tagIds;
-    newProduct[0].images = imageIds;
-    newProduct[0].thumbnail = {
-      url: thumbnail,
-      public_id: "to_be_filled" // Placeholder, replace with actual public_id if available
-    }
+
     await newProduct[0].save({ session });
 
     await session.commitTransaction();
@@ -95,10 +72,6 @@ export const createProduct = async (req, res) => {
     const productWithRelations = await Product.findById(newProduct[0]._id)
       .populate('tags')
       .populate('storeId')
-      .populate({
-        path: 'variants',
-        populate: { path: 'images', model: 'ProductImage' },
-      });
 
     return res.status(201).json({
       message: 'Product created successfully.',
@@ -113,6 +86,64 @@ export const createProduct = async (req, res) => {
   }
 };
 
+export const uploadMedia = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const files = req.files;
+    const meta_data = JSON.parse(req.body.meta_data);
+
+    if (!productId) return res.status(400).json({ success: false, message: "productId is required" });
+    if (!files?.length) return res.status(400).json({ success: false, message: "No images uploaded" });
+    if (meta_data.length !== files.length)
+      return res.status(400).json({ success: false, message: "meta_data and files count must match" });
+
+    // later on task:- verify product belongs to the seller
+
+    let product = await Product.findById(productId);
+    let thumbnail = {
+      url: "",
+      public_id: ""
+    }
+
+    const uploadedImages = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const base64 = file.buffer.toString("base64");
+
+      const result = await cloudinary.uploader.upload(
+        `data:${file.mimetype};base64,${base64}`,
+        { folder: "products" }
+      );
+
+      const imageDoc = await ProductImage.create({
+        productId,
+        url: result.secure_url,
+        public_id: result.public_id,
+        altText: meta_data[i].altText || "",
+        isPrimary: meta_data[i].isPrimary || false,
+      });
+      if (meta_data[i].isPrimary) {
+        thumbnail.url = result.secure_url
+        thumbnail.public_id = result.public_id
+      }
+      await imageDoc.save();
+      uploadedImages.push(imageDoc._id);
+    }
+
+    product.images = uploadedImages
+    product.thumbnail = thumbnail
+    await product.save()
+
+    return res.status(201).json({
+      message: "Images uploaded successfully",
+      images: uploadedImages,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error })
+  }
+}
+
 export const getStoreProducts = async (req, res) => {
   try {
     const { storeId } = req.query;
@@ -122,6 +153,7 @@ export const getStoreProducts = async (req, res) => {
       const store = await Store.findById(storeId);
       if (!store) {
         return res.status(404).json({
+          success: false,
           message: 'Store not found'
         });
       }
@@ -155,9 +187,186 @@ export const getStoreProducts = async (req, res) => {
     });
   }
 };
-//create product route
-// get store product route
-// update product rout
 
-// delete product route
-// add variant route
+export const updateProduct = async (req, res) => {
+
+  try {
+    const { productId } = req.params;
+    const { title, description, fabric, work, type, stock, color, slug } = req.body;
+    if (!productId) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product id not found'
+      });
+    }
+    const product = await Product.findById(productId).populate("storeId images")
+    if (!product) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+    if (product.storeId.ownerId.toString() !== userId.toString()) {
+      return res.status(401).json({
+        success: false,
+        message: 'You are not authorized to delete this product.'
+      });
+    }
+    if (title) {
+      product.title = title;
+    }
+    if (description) {
+      product.description = description;
+    }
+    if (fabric) {
+      product.fabric = fabric;
+    }
+    if (slug) {
+      product.slug = slug;
+    }
+    if (work) {
+      product.work = work;
+    }
+    if (type) {
+      product.type = type;
+    }
+    if (stock) {
+      product.stock = stock;
+    }
+    if (color) {
+      product.color = color;
+    }
+    await product.save();
+    return res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      product
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Internal server error ${error}`
+    });
+
+  }
+
+}
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.userId;
+    if (!productId) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product id not found'
+      });
+    }
+    const product = await Product.findById(productId).populate("storeId images variants")
+    if (!product) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+    if (product.storeId.ownerId.toString() !== userId.toString()) {
+      return res.status(401).json({
+        success: false,
+        message: 'You are not authorized to delete this product.'
+      });
+    }
+    const images = product.images
+    for (let image of images) {
+      await cloudinary.uploader.destroy(image.public_id);
+      await image.deleteOne();
+    }
+    const productsVariants = product.variants;
+    
+    for (let productVariant of productsVariants) {
+      const product = await Product.findById(productVariant.productId).populate("variants");
+      const idx = product.variants.findIndex(async(v) => {
+        if(v.productId.toString() === productId.toString()){
+          await v.deleteOne();
+          return true;
+        }
+      })
+      if (idx !== -1) {
+        product.variants.splice(idx, 1);
+        await product.save();
+      }
+    }
+    await product.deleteOne();
+    return res.status(200).json({
+      success: true,
+      message: 'Product deleted'
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Internal server error ${error}`
+    });
+  }
+}
+
+// back to add variant tommorrow, it needs to be write for creating duplicate variants
+
+export const addVariant = async (req, res) => {
+  try {
+    const { productIDs } = req.body;
+    if (!Array.isArray(productIDs)) {
+      return res.status(400).json({
+        success: false,
+        message: "ProductIds should be array."
+      })
+    }
+    let products = []
+    let productVariants = []
+    for (let i = 0; i < productIDs.length; i++) {
+      const pro = await Product.findById(productIDs[i]).populate("variants");
+      products.push(pro)
+    }
+    for (let i = 0; i < productIDs.length; i++) {
+      const productVariant = await ProductVariant.create({
+        productId: products[i]._id,
+        color: products[i].color,
+        thumbnail: products[i].thumbnail,
+        price: products[i]?.price || 1500,
+        inStock: products[i].stock == 0 ? false : true
+      })
+      productVariants.push(productVariant)
+    }
+
+    for (let i = 0; i < productIDs.length; i++) {
+      for (let j = 0; j < productIDs.length; j++) {
+        if (i == j) continue;
+        const idx = products[i].variants.findIndex((v) => v.color === productVariants[j].color)
+        if (idx === -1) {
+          products[i].variants.push(productVariants[j]._id);
+        }
+      }
+    }
+    const variants = [];
+    for (let product of products) {
+      const variant = product.variants
+      variants.push({
+        variant
+      })
+      await product.save();
+    }
+    return res.status(200).json({
+      success: true,
+      products: variants
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error."
+    })
+  }
+}
+
+
+
+

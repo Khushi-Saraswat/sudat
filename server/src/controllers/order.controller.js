@@ -30,7 +30,7 @@ export const createCheckoutSession = async (req, res) => {
                 product_data: {
                     name: item.productId?.title || "Unknown Product",
                     description: item.productId?.description || "",
-                    images: item.productId?.image ? [item.productId.image] : [],
+                    images: item.thumbnail.url ? [item.thumbnail.url] : [],
                 },
                 unit_amount: Math.round(item.unitPrice * 100), // Stripe uses cents
             },
@@ -154,7 +154,7 @@ export const placeOrder = async (req, res) => {
         let totalPrice = 0;
 
         for (let item of products) {
-            const product = await Product.findById(item.productId).populate('variants');
+            const product = await Product.findById(item.productId)
 
             // Validate product exists
             if (!product) {
@@ -164,21 +164,12 @@ export const placeOrder = async (req, res) => {
                 });
             }
 
-            const variant = product.variants.find(v => v.color.toLowerCase() === item.color.toLowerCase());
-
-            // Validate variant exists
-            if (!variant) {
-                return res.status(404).json({
-                    success: false,
-                    message: `Variant with color ${item.color} not found for product ${product.name || item.productId}`
-                });
-            }
-
+          
             // Validate stock availability
-            if (item.quantity > variant.stock) {
+            if (item.quantity > product.stock) {
                 return res.status(400).json({
                     success: false,
-                    message: `Insufficient stock for ${product.name || 'product'} (${item.color}). Available: ${variant.stock}, Requested: ${item.quantity}`
+                    message: `Insufficient stock for ${product.name || 'product'} (${item.color}). Available: ${product.stock}, Requested: ${item.quantity}`
                 });
             }
 
@@ -192,10 +183,9 @@ export const placeOrder = async (req, res) => {
 
             const orderItem = {
                 productId: product._id,
-                variantId: variant._id,
                 quantity: item.quantity,
-                price: variant.price,
-                color: variant.color
+                price: product.price,
+                color: product.color
             }
             orderedItems.push(orderItem);
             totalPrice += (orderItem.price * orderItem.quantity);

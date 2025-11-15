@@ -27,7 +27,7 @@ const productVariantSchema = new mongoose.Schema(
     },
     price:{
       type: Number,
-      default: null,
+      required:true,
     },
   },
   {
