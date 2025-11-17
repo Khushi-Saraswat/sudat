@@ -1,7 +1,7 @@
+import jwt from 'jsonwebtoken';
 import Address from '../models/Address.js';
 import User from '../models/user.js';
 import { sendOTP } from '../utils/sendOtp.js';
-import jwt from 'jsonwebtoken';
 
  // Replace with your secret key
 
@@ -81,7 +81,6 @@ export const verifyOtp = async (req, res) => {
         return res.status(200).json({
             message: 'OTP verified successfully.',
             token,
-            user
         });
     } catch (error) {
         return res.status(500).json({ message: 'OTP verification failed.', error: error.message });

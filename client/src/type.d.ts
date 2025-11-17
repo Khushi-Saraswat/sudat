@@ -1,9 +1,9 @@
-interface Slide{
+  interface Slide{
      id: number,
     image: string,
     buttonLink: string
 }
-interface User {
+  interface User {
   id: string;
   name: string;
   phone: string;

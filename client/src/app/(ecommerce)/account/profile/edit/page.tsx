@@ -1,5 +1,5 @@
 "use client";
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 
 type FormData = {
   firstName: string;
