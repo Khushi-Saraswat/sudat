@@ -39,14 +39,22 @@ const page = () => {
     <div >
       <HeroCarousel />
       {/* second section */}
-      <div className='px-20 py-5'>
+      <div className='px-10 py-5'>
         <div className=' text-center gap-4 p-8'>
-          <h1 className='text-2xl'>Winter Is Coming</h1>
-          <h3 className='text-zinc-600 mt-1'>Upgrade your wardrobe with our must-have new launches</h3>
+          <h1 className='text-2xl'>THE SAREE STORE</h1>
+          <h3 className='text-zinc-600 mt-1'>Affortable sarees at lowest price only at sudati.</h3>
         </div>
         <div className='flex justify-center gap-4 flex-wrap'>
-          <Image src={"/home/tshirt_20_10_23.avif"} alt="" height={500} width={500} />
-          <Image src={"/home/tshirt_20_10.avif"} alt="" height={500} width={500} />
+          <div>
+            <Image src={'/home/GoldComp.webp'} height={350} width={350} alt=''></Image>
+          </div>
+          <div className='flex justify-center items-center flex-col gap-4'>
+            <Image src={"/home/essentialframe-2-compressed.webp"} height={300} width={500} alt=''></Image>
+            <Image src={"/home/essentialframe-21-compressed.webp"} height={300} width={500} alt=''></Image>
+          </div>
+          <div>
+            <Image src={'/home/GoldComp.webp'} height={350} width={350} alt=''></Image>
+          </div>
         </div>
       </div>
       {/* third section */}

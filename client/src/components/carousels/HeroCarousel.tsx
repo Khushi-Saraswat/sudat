@@ -25,28 +25,17 @@ interface CarouselProps {
 const sampleSlides:Slide[] = [
   {
     id: 1,
-    image: '/home/banner_31_.avif',
+    image: '/home/Silk-Saree-desktop-compressed.webp',
    
     buttonLink: '#'
   },
   {
     id: 2,
-    image: '/home/banner_32_.avif',
+    image: '/home/Sudathi-Gold---Desktop-banner-compressed.webp',
   
     buttonLink: '#'
   },
-  {
-    id: 3,
-    image: '/home/banner-3_2__1.avif',
-  
-    buttonLink: '#'
-  },
-  {
-    id: 4,
-    image: '/home/banner_33_.avif',
-  
-    buttonLink: '#'
-  },
+ 
   
 ];
 
@@ -190,7 +179,7 @@ const Carousel = ({
 // Usage Example Component
 const HeroCarousel = () => {
   return (
-    <div className="w-full h-[33rem] bg-amber-400">
+    <div className="w-full h-[33rem]">
      
       {/* Full-featured carousel */}
       <Carousel 
