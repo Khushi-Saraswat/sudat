@@ -11,6 +11,7 @@ export const getProducts = async (req, res) => {
 
     // Fetch primary image for each product
 
+    console.log(req+"request");
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
@@ -28,13 +29,16 @@ export const getProductById = async (req, res) => {
     }
     console.log(id);
 
+    console.log(req+"request");
     const product = await Product.findById(id)
       .populate('tags')
       .populate('storeId')
       .populate('variants')
       .populate('images');
     if (!product) {
+       console.log('Product not found');
       return res.status(404).json({ message: 'Product not found' });
+      
     }
 
     res.status(200).json(product);

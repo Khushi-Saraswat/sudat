@@ -1,19 +1,40 @@
 import api from "@/lib/axios";
-import { useUserStore } from "@/stores/user.store";
-import { useQuery, useMutation } from "@tanstack/react-query";
 
+
+import { useUserStore } from "@/stores/user.store";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+// ------------------------
+// Define User type
+// Make sure this matches the API response exactly
+// ------------------------
+// ------------------------
+// Store state interface
+// ------------------------
+interface UserState {
+  user: User | null;
+  setUser: (user: User) => void;
+}
+
+// ------------------------
+// Payload types
+// ------------------------
 interface SendOtpPayload {
   phone: string;
 }
+
 interface VerifyOtpPayload {
   phone: string;
   otp: string;
-  userType:"seller"|"customer";
+  userType: "seller" | "customer";
 }
 
-// GET /api/users/me
+// ------------------------
+// GET current user
+// ------------------------
 export const useCurrentUser = () => {
-  const setUser = useUserStore((s) => s.setUser);
+  // Explicitly type 's' to UserState
+  const setUser = useUserStore((s: UserState) => s.setUser);
 
   return useQuery<User>({
     queryKey: ["current-user"],
@@ -27,7 +48,9 @@ export const useCurrentUser = () => {
   });
 };
 
+// ------------------------
 // Send OTP
+// ------------------------
 export const useSendOtp = () => {
   return useMutation({
     mutationFn: async (data: SendOtpPayload) => {
@@ -37,13 +60,18 @@ export const useSendOtp = () => {
   });
 };
 
+// ------------------------
 // Verify OTP → return token + user
+// ------------------------
 export const useVerifyOtp = () => {
   const setUser = useUserStore((s) => s.setUser);
 
   return useMutation({
     mutationFn: async (data: VerifyOtpPayload) => {
-      const res = await api.post("/user/verify-otp", data);
+      const res = await api.post<{ token: string; user: User }>(
+        "/user/verify-otp",
+        data
+      );
       return res.data;
     },
     onSuccess: (data) => {
