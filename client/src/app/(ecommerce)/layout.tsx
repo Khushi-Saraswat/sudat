@@ -3,7 +3,7 @@ import NewsletterSubscription from '@/components/shared/feature/NewsletterSubscr
 import EcomFooter from '@/components/shared/footer/EcomFooter';
 import EcomNav from '@/components/shared/header/EcomNav';
 import React from 'react';
-import QueryProvider from '../QueryProvider';
+
 
 const layout = ({
   children,
@@ -13,9 +13,9 @@ const layout = ({
   return (
     <div>
       <EcomNav />
-      <QueryProvider>
+     
          {children}
-      </QueryProvider>
+  
       <FeaturesBanner />
       <NewsletterSubscription />
       <EcomFooter />
