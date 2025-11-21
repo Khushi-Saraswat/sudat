@@ -1,7 +1,7 @@
 "use client";
+
 import { useUpdateOrEditProfile } from "@/hooks/useUser";
 import { useUserStore } from "@/stores/user.store";
-import { useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 
 type FormData = {
@@ -23,7 +23,7 @@ export default function ProfileEditForm() {
     //gender: ""
   });
 
-  const queryClient = useQueryClient();
+  
   const updateProfile = useUpdateOrEditProfile();
   const setUser = useUserStore((s) => s.setUser); // moved to top-level
 
@@ -108,8 +108,10 @@ export default function ProfileEditForm() {
             </label>
             <input
               type="email"
+              name="email"
               value={formData.email}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
 

@@ -30,6 +30,11 @@ interface VerifyOtpPayload {
   userType: "seller" | "customer";
 }
 
+interface UserDetails{
+   name:string;
+   email:string
+}
+
 // ------------------------
 // GET current user
 // ------------------------
@@ -84,13 +89,23 @@ export const useVerifyOtp = () => {
 };
 
 
-// Get user Profile -> return user profile
-export const getProfile = () => {
-
-   const setUser = useUserStore((s) => s.setUser);
+export const useUpdateOrEditProfile = () =>{
    
+    return useMutation({
+
+       mutationFn:async(data:UserDetails) =>{
+
+          const res=await api.put("/user/profile",data);
+          return res.data;
+       
+        }
+      
+    });
+
+}
 
 
 
 
-};
+
+
