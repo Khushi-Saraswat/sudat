@@ -1,9 +1,20 @@
 import api from "@/lib/axios";
 import { useUserStore } from "@/stores/user.store";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 
+// import { useUserStore } from "@/stores/user.store";
+import { Address, User } from "@/type";
+// import { useMutation, useQuery } from "@tanstack/react-query";
+
+// ------------------------
+// Define User type
+// Make sure this matches the API response exactly
+// ------------------------
+// ------------------------
+// Store state interface
+// ------------------------
 interface UserState {
   user: User | null;
   setUser: (user: User) => void;
@@ -27,13 +38,8 @@ interface UserDetails{
    email:string
 }
 
-interface Address {
-  landmark: string;
-  state: string;
-  city: string;
-  address1: string;
-  address2?: string; // optional
-  pincode: string;
+export interface AddressResponse {
+  addresses: Address[];
 }
 
 
@@ -88,7 +94,7 @@ export const useVerifyOtp = () => {
   });
 };
 
-
+//used to edit profile 
 export const useUpdateOrEditProfile = () =>{
    
     return useMutation({
@@ -104,7 +110,7 @@ export const useUpdateOrEditProfile = () =>{
 
 }
 
-
+// use to add address
 export const addAddress = () =>{
 
      
@@ -121,6 +127,29 @@ export const addAddress = () =>{
 });}
 
 
+//used to get all address
+export const getAddress = () => {
+
+    
+ 
+ 
+  return useQuery<AddressResponse>({
+    queryKey: ["Address"],
+    queryFn: async () => {
+      const res = await api.get("/user/address")
+      
+      console.log("Data------------>",res.data);
+       return res.data ?? { addresses: [] };
+      
+    
+    },
+  });
+
+
+
+
+
+};
 
 
 

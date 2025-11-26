@@ -1,3 +1,11 @@
+
+
+
+// ------------------------
+// Define User type
+// Make sure this matches the API response exactly
+// ------------------------
+
 interface User {
   id: string;
   name: string;
@@ -52,3 +60,16 @@ interface BaseProduct{
   storeId:string,
   varients:SellerProduct[]
 }
+
+
+//type for address
+export interface Address {
+  
+  address1: string
+  landmark?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  
+}
+

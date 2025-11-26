@@ -1,27 +1,42 @@
 "use client";
+
 import AddressCard from "@/components/cards/AddressCard";
 import AddNewAddressForm from "@/components/models/AddAddresseModel";
+import { getAddress } from "@/hooks/useUser";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-// Main My Addresses Page
 export default function page() {
-  const [isOpen, setIsOpen] = useState(false);  
-  const handleAddNewAddress = () => {
-    setIsOpen(true);
-  };
+
+  const { data: address, isLoading, error } = getAddress();
+  
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleAddNewAddress = () => setIsOpen(true);
 
   const handleEdit = () => {
     console.log("Edit address clicked");
-    alert("edit");
   };
 
   const handleRemove = () => {
     console.log("Remove address clicked");
   };
 
+
+   if(isLoading)
+      return (
+        <img src="/loaders/form_loader.gif" alt="Loading spinner" style={{ width: '100px' }}/>
+      );
+
+      if(error)
+       return (
+        <img src="/loaders/form_loader.gif" alt="Loading spinner" style={{ width: '100px' }}/>
+      );
+    
   return (
     <div className="w-[75%] p-6">
+
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">My Addresses</h1>
@@ -34,20 +49,31 @@ export default function page() {
         </button>
       </div>
 
-      {/* Address Cards */}
+
+
+     
+
+
+
+      {/* Address List */}
       <div className="space-y-4">
-        <AddressCard
-          name="Gaurav Sharma"
-          address="Paktola Tajganj, , shiv mandire, Agra Uttar Pradesh - 282002"
-          mobile="+91 9389152789"
-          isHome={true}
-          onEdit={handleEdit}
-          onRemove={handleRemove}
-        />
-        
-        {/* You can add more address cards here */}
+        { !isLoading && !error && address?.addresses?.map((add: any) => (
+          <AddressCard
+            key={add._id}
+            address1={add.address1}
+            landmark={add.landmark}
+            city={add.city}
+            state={add.state}
+            pincode={add.pincode}
+            isHome={add.type === "home"}
+            onEdit={handleEdit}
+            onRemove={handleRemove}
+          />
+        ))}
       </div>
-      <AddNewAddressForm setIsOpen={setIsOpen} isOpen={isOpen}/>
+
+      {/* Add New Address Form */}
+      <AddNewAddressForm setIsOpen={setIsOpen} isOpen={isOpen} />
     </div>
   );
 }
