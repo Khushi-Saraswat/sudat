@@ -17,15 +17,15 @@ const ActionMenu = ({ product, setIsUploadDialogOpen,setProductId,setIsDeleteDia
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (open && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.right + window.scrollX - 160, // 160px = menu width
-      });
-    }
-  }, [open]);
+  // useEffect(() => {
+  //   if (open && buttonRef.current) {
+  //     const rect = buttonRef.current.getBoundingClientRect();
+  //     setPosition({
+  //       top: rect.bottom + window.scrollY,
+  //       left: rect.right + window.scrollX - 160, // 160px = menu width
+  //     });
+  //   }
+  // }, [open]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {

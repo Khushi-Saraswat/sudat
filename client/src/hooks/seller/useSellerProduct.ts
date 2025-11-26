@@ -17,30 +17,26 @@ interface ProductDataPayload {
     price: number,
     originalPrice: number,
 }
-interface uploadMediaPayload {
-   images: File[];
-   meta_data: {
-       id: string;
-       altText: string;
-       type: string;
-   }[];
+interface BaseProductPayload {
+    title:string,
+    storeId:string
 }
 // GET /api/users/me
 export const useGetAllSellerProducts = (storeId: string) => {
     const setProducts = useSellerProducts((s) => s.setProducts);
 
     return useQuery<SellerProduct[]>({
-       queryKey: ["seller-product", storeId],
+        queryKey: ["seller-product", storeId],
         queryFn: async () => {
-            const res = await api.get(`/product/store/${storeId}`)
-            setProducts(res.data.products);
-              console.log("Data------------>",res.data);
-            return res.data.products;
+            const res = await api.get(`/parentProduct/${storeId}`)
+            setProducts(res.data.parentProducts);
+            console.log("Data------------>", res.data);
+            return res.data.parentProducts;
         },
     });
 };
 
-// Send OTP
+
 export const useAddProduct = () => {
     return useMutation({
         mutationFn: async (data: ProductDataPayload) => {
@@ -49,7 +45,15 @@ export const useAddProduct = () => {
         },
     });
 };
-export const useUploadMedia = (productId:string) => {
+export const useAddBaseProduct = () => {
+    return useMutation({
+        mutationFn: async (data: BaseProductPayload) => {
+            const res = await api.post("/parentProduct", data);
+            return res.data;
+        },
+    });
+};
+export const useUploadMedia = (productId: string) => {
     return useMutation({
         mutationFn: async (data: FormData) => {
             const res = await api.post(`/product/upload/${productId}`, data);
@@ -57,11 +61,18 @@ export const useUploadMedia = (productId:string) => {
         },
     });
 };
-export const useDeleteProduct = (productId:string) => {
+export const useDeleteProduct = (productId: string) => {
     return useMutation({
         mutationFn: async () => {
             const res = await api.delete(`/product/${productId}`);
             return res.data;
         },
+        onSuccess: () => {
+            toast.success("Product deleted successfully");
+        },
+
+        onError: () => {
+            toast.error("Failed to delete product. Please try again.");
+        }
     });
 };

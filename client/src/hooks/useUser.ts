@@ -4,17 +4,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 
-// import { useUserStore } from "@/stores/user.store";
-import { User } from "@/type";
-// import { useMutation, useQuery } from "@tanstack/react-query";
-
-// ------------------------
-// Define User type
-// Make sure this matches the API response exactly
-// ------------------------
-// ------------------------
-// Store state interface
-// ------------------------
 interface UserState {
   user: User | null;
   setUser: (user: User) => void;

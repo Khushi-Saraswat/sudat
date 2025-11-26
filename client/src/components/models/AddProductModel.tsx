@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useSellerStore } from '@/stores/seller/store.store';
 import { useAddProduct } from '@/hooks/seller/useSellerProduct';
 import { toast } from 'react-toastify';
+import FormSubmissionLoader from '../loaders/FormSubmissionLoader';
 
 export const productSchema = z.object({
   title: z.string().min(1).max(100),
@@ -44,7 +45,7 @@ const types = [
 export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   // All hooks must be called unconditionally at the top
   const stores = useSellerStore((s) => s.stores);
-  const addProductMutation = useAddProduct()
+  const { mutate: addProductMutation, isPending } = useAddProduct()
   const [formData, setFormData] = useState<ProductFormData>({
     title: '',
     description: '',
@@ -58,7 +59,7 @@ export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean
     originalPrice: 0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
- 
+
   const handleInputChange = (field: keyof ProductFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
@@ -91,38 +92,41 @@ export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean
   };
 
   const handleSubmit = () => {
-    if (validateForm()) { 
+    if (validateForm()) {
       console.log(formData);
-          
-      addProductMutation.mutate(formData,{
+
+      addProductMutation(formData, {
         onSuccess: (data) => {
           toast.success("Product added successfully");
+          setIsOpen(false);
+          setFormData({
+            title: '',
+            description: '',
+            fabric: "",
+            work: "",
+            type: "",
+            storeId: '',
+            stock: 0,
+            color: "",
+            price: 0,
+            originalPrice: 0,
+          });
         },
-       onError: (error: any) => { 
+        onError: (error: any) => {
           toast.error(error?.response?.data?.message || "Failed to add product");
-       }
-       
+        }
+
       })
-      setIsOpen(false);
-      setFormData({
-        title: '',
-        description: '',
-        fabric: "",
-        work: "",
-        type: "",
-        storeId: '',
-        stock: 0,
-        color: "",
-        price: 0,
-        originalPrice: 0,
-      });
+
     }
   };
 
-  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
+   <>
+     {
+      isOpen && (
+         <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl md:w-1/2 w-full  max-h-[90vh] overflow-hidden overflow-y-scroll">
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -292,7 +296,7 @@ export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean
               <input
                 type="text"
                 value={formData.color}
-                onChange={(e) => handleInputChange('color',e.target.value)}
+                onChange={(e) => handleInputChange('color', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${errors.color ? 'border-red-300' : 'border-gray-300'
                   }`}
                 placeholder="color"
@@ -320,7 +324,7 @@ export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean
               )}
             </div>
 
-           
+
             {/* Description */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -345,15 +349,20 @@ export default function AddProductModal({ isOpen, setIsOpen }: { isOpen: boolean
               Cancel
             </button>
             <button
+              disabled={isPending}
               type="button"
               onClick={handleSubmit}
-              className="px-4 py-2 cursor-pointer bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className={`px-4 flex justify-center items-center gap-2 py-2 cursor-pointer bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               Add Product
+              {isPending && <FormSubmissionLoader />}
             </button>
           </div>
         </div>
       </div>
     </div>
+      )
+     }
+   </>
   );
 }

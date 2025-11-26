@@ -1,14 +1,3 @@
-import api from "@/lib/axios";
-
-
-import { useUserStore } from "@/stores/user.store";
-import { useMutation, useQuery } from "@tanstack/react-query";
-
-// ------------------------
-// Define User type
-// Make sure this matches the API response exactly
-// ------------------------
-
 interface User {
   id: string;
   name: string;
@@ -42,14 +31,24 @@ interface Product{
   price: number;
   thumbnail: string;
 }
+
 interface SellerProduct{
   _id: string;
   title: string;
   isActive: boolean;
   stock: number;
   price: number;
+  status:string
   thumbnail: {
     public_id: string;
     url: string;
   };
+  slug:string
+}
+interface BaseProduct{
+  _id:string,
+  title:string,
+  isParent:boolean
+  storeId:string,
+  varients:SellerProduct[]
 }

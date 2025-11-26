@@ -6,6 +6,7 @@ import Store from '../models/store.js';
 import mongoose from 'mongoose';
 import cloudinary from '../config/cloudinary.js';
 import { getDiscountPercentage } from '../utils/helper.js';
+import ParentProduct from '../models/ParentProduct.js';
 
 // 06-11-25 test this api and create add prodcut as a variant api
 
@@ -26,7 +27,8 @@ export const createProduct = async (req, res) => {
       stock,
       color,
       price,
-      originalPrice
+      originalPrice,
+      parentId
     } = req.body;
     const user = req.user;
 
@@ -39,13 +41,14 @@ export const createProduct = async (req, res) => {
       await session.abortTransaction();
       return res.status(403).json({ message: 'Not authorized to add products to this store.' });
     }
+
     const discountPercentage = getDiscountPercentage(originalPrice, price);
     // Generate slug if not provided
     const slugValue = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     // Create Product
     const newProduct = await Product.create(
-      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price,originalPrice,discountPercentage }],
+      [{ title, description, storeId, slug: slugValue, fabric, work, type, stock, color, price,originalPrice,discountPercentage,parentId }],
       { session }
     );
 
@@ -121,7 +124,7 @@ export const uploadMedia = async (req, res) => {
         productId,
         url: result.secure_url,
         public_id: result.public_id,
-        altText: meta_data[i].altText || "",
+        altText: meta_data[i].type || "",
         isPrimary: meta_data[i].type==="front",
       });
       if (meta_data[i].type === "front") {
@@ -134,6 +137,7 @@ export const uploadMedia = async (req, res) => {
 
     product.images = uploadedImages
     product.thumbnail = thumbnail
+    product.isActive = true
     await product.save()
 
     return res.status(201).json({
@@ -170,7 +174,7 @@ export const getStoreProducts = async (req, res) => {
           message: 'You are not authorized to view products of this store.'
         });
       }
-      const storeProducts = await Product.find({ storeId }) 
+      const storeProducts = await ParentProduct.find({ storeId }) 
         .limit(10)               
         .select('title price thumbnail stock _id isActive');
 
