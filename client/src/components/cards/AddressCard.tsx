@@ -1,5 +1,9 @@
+import { useState } from "react";
+import EditAddressForm from "./EditAddressForm";
+
 // Address Card Component
 interface AddressCardProps {
+  id:string,
   landmark: string;
   state: string;
   city: string;
@@ -7,10 +11,12 @@ interface AddressCardProps {
   pincode: string;
   isHome?: boolean;
   onEdit: () => void;
-  onRemove: () => void;
+  onRemove: (id: string) => void;
 }
 
 export default function AddressCard({
+
+  id,
   landmark,
   state,
   city,
@@ -20,6 +26,12 @@ export default function AddressCard({
   onEdit,
   onRemove
 }: AddressCardProps) {
+
+  
+    const [isOpen, setIsOpen] = useState(false);
+  
+    const EditAddress = () => setIsOpen(true);
+
   return (
     <div className="bg-white border shadow-lg border-gray-200 rounded-lg p-6 mb-4">
       
@@ -34,13 +46,13 @@ export default function AddressCard({
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
           <button 
-            onClick={onEdit}
+            onClick={EditAddress}
             className="text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
           >
             EDIT
           </button>
           <button 
-            onClick={onRemove}
+            onClick={() => {onRemove(id)}}
             className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
           >
             REMOVE
@@ -54,6 +66,9 @@ export default function AddressCard({
           {address1}, {landmark}, {city}, {state} - {pincode}
         </p>
       </div>
+      
+    <EditAddressForm isOpen={isOpen} setIsOpen={setIsOpen}  id={id}/>
     </div>
+
   );
 }

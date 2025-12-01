@@ -72,7 +72,9 @@ export default function AddNewAddressForm({isOpen, setIsOpen}: {isOpen: boolean,
              state:data.state,
              city:data.cityTown,
              address1:data.address1,
-             pincode:data.postCode
+             pincode:data.postCode,
+             
+          
 
 
       },

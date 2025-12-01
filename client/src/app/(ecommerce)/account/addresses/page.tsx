@@ -2,26 +2,50 @@
 
 import AddressCard from "@/components/cards/AddressCard";
 import AddNewAddressForm from "@/components/models/AddAddresseModel";
-import { getAddress } from "@/hooks/useUser";
+import { deleteAddress, getAddress } from "@/hooks/useUser";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function page() {
 
   const { data: address, isLoading, error } = getAddress();
+
+  const deleteAdd = deleteAddress();
+  
   
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddNewAddress = () => setIsOpen(true);
 
+  
+
+  
   const handleEdit = () => {
     console.log("Edit address clicked");
+     
+    //edit logic.......
+
+
+   
+
+
+
   };
 
-  const handleRemove = () => {
-    console.log("Remove address clicked");
-  };
+const handleRemove = (id: string) => {
+  const confirmed = window.confirm("Do you want to delete this address?");
+  
+    if (confirmed) {
+    deleteAdd.mutate(id);
+    toast.success("Address deleted");
+
+    } else {
+    toast("Delete canceled");
+    }
+};
+
 
 
    if(isLoading)
@@ -48,18 +72,11 @@ export default function page() {
           <span className="text-sm font-bold">ADD NEW ADDRESS</span>
         </button>
       </div>
-
-
-
-     
-
-
-
       {/* Address List */}
       <div className="space-y-4">
         { !isLoading && !error && address?.addresses?.map((add: any) => (
           <AddressCard
-            key={add._id}
+            id={add._id}
             address1={add.address1}
             landmark={add.landmark}
             city={add.city}
@@ -74,6 +91,8 @@ export default function page() {
 
       {/* Add New Address Form */}
       <AddNewAddressForm setIsOpen={setIsOpen} isOpen={isOpen} />
+
+      
     </div>
   );
 }

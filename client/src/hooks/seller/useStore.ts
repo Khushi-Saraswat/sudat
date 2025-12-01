@@ -1,6 +1,7 @@
 import api from "@/lib/axios";
 import { useSellerStore } from "@/stores/seller/store.store";
 import { useUserStore } from "@/stores/user.store";
+import { Store } from "@/type";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
