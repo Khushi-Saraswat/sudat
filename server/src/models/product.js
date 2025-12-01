@@ -2,11 +2,6 @@ import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
   {
-    storeId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Store',
-      required: true,
-    },
     title: {
       type: String,
       required: true,
@@ -59,12 +54,11 @@ const productSchema = new mongoose.Schema(
         ref: 'Tag',
       },
     ],
-    variants: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ProductVariant',
-      },
-    ],
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ParentProduct',
+      required: true,
+    },
     thumbnail: {
       url: {
         type: String,
@@ -83,22 +77,22 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
+
     isActive: {
       type: Boolean,
       default: false,
     },
-    color:{
+    color: {
       type: String,
       default: '',
     },
     price: {
       type: Number,
-      require:true
+      require: true
     },
     originalPrice: {
       type: Number,
-      require:true
+      require: true
     },
   },
   { timestamps: true }

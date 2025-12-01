@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { useDeleteProduct } from '@/hooks/seller/useSellerProduct';
+import FormSubmissionLoader from '../loaders/FormSubmissionLoader';
 
 interface Product {
     id: string;
@@ -13,17 +14,19 @@ interface DeleteProductDialogProps {
     setIsOpen: (isOpen: boolean) => void;
 }
 const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ productId, productName, isOpen, setIsOpen }) => {
-    const { mutate: deleteProduct } = useDeleteProduct(productId);
+    const { mutate: deleteProduct,isPending } = useDeleteProduct(productId);
     const handleDelete = () => {
         deleteProduct()
         setIsOpen(false);
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4"
+       <>
+         {
+            isOpen && (
+                 <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4"
         >
-            {isOpen && (
-                <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative animate-fadeIn">
                         <button
                             onClick={() => setIsOpen(false)}
@@ -55,15 +58,16 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ productId, pr
                                 Cancel
                             </button>
                             <button
+                                disabled={isPending}
                                 onClick={handleDelete}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                                className={`px-4 py-2 flex justify-center items-center gap-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 Delete
+                                {isPending && <FormSubmissionLoader/>}
                             </button>
                         </div>
                     </div>
                 </div>
-            )}
 
             <style>{`
         @keyframes fadeIn {
@@ -81,6 +85,9 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ productId, pr
         }
       `}</style>
         </div>
+            )
+         }
+       </>
     );
 };
 

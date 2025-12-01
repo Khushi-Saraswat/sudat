@@ -2,7 +2,9 @@
 import ExploreCategoryCard from '@/components/cards/ExploreCategoryCard'
 import ProductCard from '@/components/cards/ProductCard'
 import HeroCarousel from '@/components/carousels/HeroCarousel'
+import { useGetProducts } from '@/hooks/buyer/useProducts'
 import { useCurrentUser } from '@/hooks/useUser'
+import { useProductStore } from '@/stores/buyer/products.store'
 import { useUserStore } from '@/stores/user.store'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -36,14 +38,23 @@ const category = [
 ]
 const page = () => {
   const {isLoading } = useCurrentUser();
+  const {isPending} = useGetProducts()
   const user = useUserStore((s) => s.user);
+  const products = useProductStore(s=>s.products)
   const router = useRouter();
-
+  console.log(products);
+  
   useEffect(() => {
     if (!isLoading && user?.userType === "seller") {
       router.push("/admin/dashboard");
     }
   }, [user, isLoading]);
+  const onViewDetails=(id:string)=>{
+     router.push(`/item/${id}`);
+  }
+  if(isPending){
+    return <div>Loading.....</div>
+  }
 
   return (
     <div >
@@ -117,8 +128,17 @@ const page = () => {
         </div>
         <div className='grid grid-cols-5 gap-2'>
           {
-            Array.from({ length: 10 }).map((_, index) => (
-              <ProductCard key={index} />
+            products?.map((product, index) => (
+              <ProductCard 
+              key={index} 
+              title={product.title}  
+              image={product.thumbnail.url}
+              originalPrice={product.originalPrice}
+              discount={product.discountPercentage}
+              price={product.price}
+              onViewDetails={onViewDetails}
+              id={product._id}
+              />
             ))
           }
         </div>

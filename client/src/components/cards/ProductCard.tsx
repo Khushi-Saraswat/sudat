@@ -5,12 +5,13 @@ import Image from 'next/image';
 import { useUserStore } from '@/stores/user.store';
 
 const ProductCard = ({ 
+  id="",
   image = "/home/tshirt.avif",
   title = "Blue Structured Checks..",
   price = 899,
   originalPrice = 1099,
   discount = 18,
-  onViewDetails = () => console.log('View details clicked'),
+  onViewDetails = (id:string) => console.log('View details clicked'),
   onWishlist = () => console.log('Wishlist clicked'),
   className = ""
 }) => {
@@ -24,11 +25,11 @@ const ProductCard = ({
   };
 
   const handleViewDetails = () => {
-    onViewDetails();
+    onViewDetails(id);
   };
 
   return (
-    <div className={`bg-white md:w-auto w-1/2  shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden max-w-xs group flex flex-col ${className}`}>
+    <div onClick={handleViewDetails} className={`bg-white md:w-auto w-1/2  shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden max-w-xs group flex flex-col ${className}`}>
       {/* Image Container - Fixed height */}
       <div className="relative md:h-64 bg-gray-100 overflow-hidden flex-shrink-0">
         {!imageLoaded && (

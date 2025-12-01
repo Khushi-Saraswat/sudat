@@ -1,11 +1,3 @@
-
-
-
-// ------------------------
-// Define User type
-// Make sure this matches the API response exactly
-// ------------------------
-
 interface User {
   id: string;
   name: string;
@@ -35,31 +27,64 @@ interface Store {
 interface Product{
   _id: string;
   title: string;
-  description: string;
   price: number;
-  thumbnail: string;
+  originalPrice:number,
+  discountPercentage:number
+  thumbnail: {
+    url:string,
+    public_id:string
+  };
 }
+
 interface SellerProduct{
   _id: string;
   title: string;
   isActive: boolean;
   stock: number;
   price: number;
+  status:string
   thumbnail: {
     public_id: string;
     url: string;
   };
+  slug:string
+}
+interface BaseProduct{
+  _id:string,
+  title:string,
+  isParent:boolean
+  storeId:string,
+  varients:SellerProduct[]
 }
 
 
 //type for address
-export interface Address {
-  
+interface Address {
   address1: string
   landmark?: string;
   city: string;
   state: string;
-  pincode: string;
-  
+  pincode: string;  
 }
 
+interface MainProduct{
+  title:string,
+  price:number,
+  originalPrice:number,
+  discountPercentage:number,
+  description:string,
+  images:[
+    {
+      url:string,
+      public_id:string
+    }
+  ]
+}
+interface Variant{
+  thumbnail:{
+    url:string,
+    public_id:string
+  },
+  color:string,
+  _id:string
+}

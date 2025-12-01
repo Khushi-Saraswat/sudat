@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus, Upload, Trash2 } from 'lucide-react';
 import { useUploadMedia } from '@/hooks/seller/useSellerProduct';
 import { toast } from 'react-toastify';
+import FormSubmissionLoader from '../loaders/FormSubmissionLoader';
 
 interface ImageMetadata {
   id: string;
@@ -96,8 +97,10 @@ const ProductImageDialog: React.FC<ProductImageDialogProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      {isOpen && (
+   <>
+    {
+      isOpen && (
+         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
         <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             {/* Header */}
@@ -216,17 +219,22 @@ const ProductImageDialog: React.FC<ProductImageDialogProps> = ({
                 Cancel
               </button>
               <button
+              disabled={isPending}
                 onClick={handleSubmit}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg hover:shadow-xl"
+                className={`px-6 py-2 flex justify-center items-center gap-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg hover:shadow-xl ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 Upload Images
+                {isPending && <FormSubmissionLoader/>}
+
               </button>
             </div>
           </div>
         </div>
-      )}
     </div>
-  );
+      )
+    }
+   </>
+  ); 
 };
 
 export default ProductImageDialog;

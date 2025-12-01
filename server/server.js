@@ -9,6 +9,7 @@ import productRoute from './src/routes/product.route.js';
 import userCartRoute from './src/routes/userCart.route.js';
 import productReview from './src/routes/productReview.route.js';
 import orderRoute from './src/routes/order.route.js';
+import parentProduct from './src/routes/parentProduct.route.js';
 import connectDB from './src/db/db.js';
 import Stripe from 'stripe';
 // import "./src/models/index.js";
@@ -33,6 +34,7 @@ app.use('/api/product', productRoute);
 app.use('/api/usercart', userCartRoute);
 app.use('/api/review', productReview);
 app.use('/api/order', orderRoute);
+app.use('/api/parentProduct', parentProduct);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 })

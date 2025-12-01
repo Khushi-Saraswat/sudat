@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 type SellerProductState = {
-    products: SellerProduct[] | null;
-    setProducts: (products: SellerProduct[] | null) => void;
+    products: BaseProduct[] | null;
+    setProducts: (products: BaseProduct[] | null) => void;
     addProduct: (stores: Store[] | null) => void;
     
     updateProduct: (store: Store) => void;

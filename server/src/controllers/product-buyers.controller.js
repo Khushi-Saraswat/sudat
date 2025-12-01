@@ -6,7 +6,7 @@ export const getProducts = async (req, res) => {
     const products = await Product.find({
       isActive: true,
     })
-      .select("title price description price thumbnail")
+      .select("title price thumbnail originalPrice discountPercentage")
       .limit(10)
 
     // Fetch primary image for each product
@@ -30,19 +30,26 @@ export const getProductById = async (req, res) => {
     }
     console.log(id);
 
-    console.log(req+"request");
+    console.log(req + "request");
     const product = await Product.findById(id)
-      .populate('tags')
-      .populate('storeId')
-      .populate('variants')
-      .populate('images');
-    if (!product) {
-       console.log('Product not found');
-      return res.status(404).json({ message: 'Product not found' });
-      
-    }
+      .populate({
+        path: "tags",
+        select: "name slug"   // choose whatever fields you need
+      })
+      .populate({
+        path: "images",
+        select: "url public_id"
+      });
 
-    res.status(200).json(product);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+
+    }
+    const variants = await Product.find({
+      parentId: product.parentId,
+      _id: { $ne: product._id }   // exclude current product
+    }).select("thumbnail color _id");
+    res.status(200).json({ success: true, product, variants });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
@@ -111,7 +118,7 @@ export const searchProducts = async (req, res) => {
     res.status(500).json({ message: "Server error during search" });
   }
 };
-//review product route 
+//review product route
 
 
 // add to card route
