@@ -128,7 +128,7 @@ export default function EmbroideredSareeSection() {
       name: "Elegant Chiffon Embroidered Saree with Pearl Details",
       price: 2999,
       originalPrice: 5999,
-      image: "/images/ElegantChiffon.jpg",
+      image: "/images/chiffon.webp",
       rating: 4,
       reviews: 156,
       discount: 50,

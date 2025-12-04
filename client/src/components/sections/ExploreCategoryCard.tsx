@@ -25,9 +25,9 @@ export default function ExploreCategoryCard({
       <img 
         src={url} 
         alt={title}
-        className={`w-full h-full object-cover object-center transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+        className={` max-w-full h-auto transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+      <div className="absolute inset-0  bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
       
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform transition-transform duration-500">
         <h3 className="text-2xl font-bold mb-2 tracking-wide">{title}</h3>

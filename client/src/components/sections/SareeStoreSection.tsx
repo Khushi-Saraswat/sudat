@@ -3,95 +3,97 @@ import Image from 'next/image';
 
 export default function SareeStoreSection() {
   return (
-    <div className='px-4 sm:px-6 md:px-10 py-8 md:py-12 bg-gradient-to-b from-white to-rose-50'>
+    <div className='min-h-screen px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-12 md:py-16 lg:py-20 bg-gradient-to-b from-white via-rose-50/30 to-white'>
       {/* Header Section */}
-      <div className='text-center gap-4 p-4 sm:p-6 md:p-8 max-w-4xl mx-auto'>
-        <h1 className='text-3xl sm:text-4xl md:text-5xl font-serif text-rose-900 mb-2 md:mb-3'>
-          THE SAREE STORE
-        </h1>
-        <p className='text-base sm:text-lg text-zinc-600 font-light tracking-wide px-4'>
-          Affordable sarees at lowest prices only at Sudati
+      <div className='text-center max-w-4xl mx-auto mb-12 md:mb-16 lg:mb-20'>
+        <p className='text-xs sm:text-sm uppercase tracking-[0.3em] text-rose-400 font-light mb-4'>
+          Curated Collection
         </p>
-        <div className='w-16 sm:w-24 h-1 bg-rose-400 mx-auto mt-3 md:mt-4'></div>
+        <h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-rose-900 mb-6 tracking-tight'>
+          The Saree Store
+        </h1>
+        <p className='text-base sm:text-lg md:text-xl text-zinc-600 font-light max-w-2xl mx-auto leading-relaxed'>
+          Affordable elegance at unbeatable prices. Discover timeless drapes that celebrate heritage.
+        </p>
+        <div className='w-20 h-px bg-rose-400 mx-auto mt-8'></div>
       </div>
       
       {/* Gallery Section */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto mt-6 md:mt-8'>
-        {/* Left Column - Hidden on mobile, shows on md+ */}
-        <div className='hidden md:block'>
-          <div className='group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 h-full'>
-            <Image 
-              src={'/images/sar1.jpg'} 
-              height={350} 
-              width={350} 
-              alt='Gold Collection Saree' 
-              className='group-hover:scale-110 transition-transform duration-700 w-full h-full object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'>
-              <div className='absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-white'>
-                <h3 className='text-xl sm:text-2xl font-serif mb-1 sm:mb-2'>Gold Collection</h3>
-                <p className='text-xs sm:text-sm'>Timeless Elegance</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Center Column - Main content for all screens */}
-        <div className='flex flex-col gap-4 sm:gap-6 md:col-span-1'>
-          <div className='group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500'>
-            <Image 
-              src={"/images/sar2.jpg"} 
-              height={300} 
-              width={500} 
-              alt='Essential Collection' 
-              className='group-hover:scale-110 transition-transform duration-700 w-full h-auto object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'>
-              <div className='absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-white'>
-                <h3 className='text-xl sm:text-2xl font-serif mb-1 sm:mb-2'>Essential Collection</h3>
-                <p className='text-xs sm:text-sm'>Everyday Grace</p>
-              </div>
-            </div>
-          </div>
+      <div className='max-w-7xl mx-auto'>
+        <div className='grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 lg:gap-8'>
           
-          <div className='group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500'>
-            <Image 
-              src={"/images/sar3.jpg"} 
-              height={300} 
-              width={500} 
-              alt='Premium Collection' 
-              className='group-hover:scale-110 transition-transform duration-700 w-full h-auto object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'>
-              <div className='absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-white'>
-                <h3 className='text-xl sm:text-2xl font-serif mb-1 sm:mb-2'>Premium Collection</h3>
-                <p className='text-xs sm:text-sm'>Luxurious Drapes</p>
+          {/* Left Column - Hidden on mobile */}
+          <div className='hidden md:block md:col-span-4'>
+            <div className='group relative overflow-hidden rounded-sm h-[70vh] cursor-pointer'>
+              <Image 
+                src='/images/sar1.jpg'
+                fill
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw'
+                alt='Gold Collection Saree' 
+                className='object-cover transition-transform duration-700 ease-out group-hover:scale-105'
+                priority
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+              <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500'>
+                <h3 className='text-2xl md:text-3xl font-light mb-2 tracking-wide'>Gold Collection</h3>
+                <p className='text-sm text-white/80 font-light tracking-wider uppercase'>Timeless Elegance</p>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Column - Hidden on mobile, shows on lg+ */}
-        <div className='hidden lg:block'>
-          <div className='group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 h-full'>
-            <Image 
-              src={'/images/sar4.jpg'} 
-              height={350} 
-              width={350} 
-              alt='Designer Saree' 
-              className='group-hover:scale-110 transition-transform duration-700 w-full h-full object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'>
-              <div className='absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-white'>
-                <h3 className='text-xl sm:text-2xl font-serif mb-1 sm:mb-2'>Designer Range</h3>
-                <p className='text-xs sm:text-sm'>Curated Perfection</p>
+          {/* Center Column - Main content */}
+          <div className='md:col-span-4 flex flex-col gap-4 md:gap-6 lg:gap-8'>
+            <div className='group relative overflow-hidden rounded-sm h-[45vh] md:h-[33vh] cursor-pointer'>
+              <Image 
+                src='/images/sar2.jpg'
+                fill
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw'
+                alt='Essential Collection' 
+                className='object-cover transition-transform duration-700 ease-out group-hover:scale-105'
+                priority
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+              <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500'>
+                <h3 className='text-2xl md:text-3xl font-light mb-2 tracking-wide'>Essential Collection</h3>
+                <p className='text-sm text-white/80 font-light tracking-wider uppercase'>Everyday Grace</p>
+              </div>
+            </div>
+            
+            <div className='group relative overflow-hidden rounded-sm h-[45vh] md:h-[33vh] cursor-pointer'>
+              <Image 
+                src='/images/sar3.jpg'
+                fill
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw'
+                alt='Premium Collection' 
+                className='object-cover transition-transform duration-700 ease-out group-hover:scale-105'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+              <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500'>
+                <h3 className='text-2xl md:text-3xl font-light mb-2 tracking-wide'>Premium Collection</h3>
+                <p className='text-sm text-white/80 font-light tracking-wider uppercase'>Luxurious Drapes</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Hidden on mobile & tablet */}
+          <div className='hidden md:block md:col-span-4'>
+            <div className='group relative overflow-hidden rounded-sm h-[70vh] cursor-pointer'>
+              <Image 
+                src='/images/car4.webp'
+                fill
+                sizes='(max-width: 1200px) 100vw, 25vw'
+                alt='Designer Saree' 
+                className='object-cover transition-transform duration-700 ease-out group-hover:scale-105'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+              <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500'>
+                <h3 className='text-2xl md:text-3xl font-light mb-2 tracking-wide'>Designer Range</h3>
+                <p className='text-sm text-white/80 font-light tracking-wider uppercase'>Curated Perfection</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 }

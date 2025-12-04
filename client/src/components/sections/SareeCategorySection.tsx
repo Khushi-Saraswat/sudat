@@ -4,7 +4,7 @@ import ExploreCategoryCard from "./ExploreCategoryCard";
 export default function SareeCategorySection() {
   const categories = [
     {
-      url: "/images/banarsi.jpg",
+      url: "/images/banarsi.webp",
       title: "Banarasi",
       description: "Timeless elegance woven in silk",
       gradient: "from-purple-600/20 to-pink-600/20"
@@ -28,7 +28,7 @@ export default function SareeCategorySection() {
       gradient: "from-fuchsia-600/20 to-purple-600/20"
     },
     {
-      url: "/images/bandhani.jpg",
+      url: "/images/bhandhni.webp",
       title: "Bandhani",
       description: "Vibrant tie-dye traditions",
       gradient: "from-rose-600/20 to-orange-600/20"
