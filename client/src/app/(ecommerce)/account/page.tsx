@@ -2,6 +2,7 @@
 "use client"
 
 
+import FallbackUser from "@/components/fallback/FallbackUser";
 import { useCurrentUser } from "@/hooks/useUser";
 import Link from "next/link";
 
@@ -14,8 +15,11 @@ export default function page() {
      
      const{data:user,isLoading,error}=useCurrentUser();
      
-
-      // if user loads
+     //if user is not present
+     if(!user)
+     return <FallbackUser/>
+     
+     // if user loads
      if(isLoading)
       return <p>Loading.....</p>
   

@@ -181,7 +181,8 @@ const setUser = useUserStore((s: UserState) => s.setUser);
 export const useEditAddress = () => {
   return useMutation({
     mutationFn: async (data: AddressEdit) => {
-      const res = await api.put(`/address/${data.id}`, data);
+      console.log("id is: ",data.id);
+      const res = await api.put(`/user/address/${data.id}`, data);
       return res.data;
     },
   });

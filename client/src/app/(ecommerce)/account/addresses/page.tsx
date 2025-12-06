@@ -1,6 +1,9 @@
 "use client";
 
 import AddressCard from "@/components/cards/AddressCard";
+import Error from "@/components/error/Error";
+import FallbackAddress from "@/components/fallback/FallbackAddress";
+import FormSubmissionLoader from "@/components/loaders/FormSubmissionLoader";
 import AddNewAddressForm from "@/components/models/AddAddresseModel";
 import { deleteAddress, getAddress } from "@/hooks/useUser";
 import { Plus } from "lucide-react";
@@ -11,6 +14,9 @@ export default function page() {
 
   const { data: address, isLoading, error } = getAddress();
 
+
+  
+
   const deleteAdd = deleteAddress();
   
   
@@ -19,46 +25,41 @@ export default function page() {
 
   const handleAddNewAddress = () => setIsOpen(true);
 
-  
+      
 
   
-  const handleEdit = () => {
-    console.log("Edit address clicked");
-     
-    //edit logic.......
-
-
-   
-
-
-
-  };
+  
 
 const handleRemove = (id: string) => {
-  const confirmed = window.confirm("Do you want to delete this address?");
-  
-    if (confirmed) {
-    deleteAdd.mutate(id);
-    toast.success("Address deleted");
 
-    } else {
-    toast("Delete canceled");
-    }
+      deleteAdd.mutate(id, {
+      onSuccess: () => {
+
+        toast.success("Address deleted");
+
+      },
+      onError: (error) => {
+        
+        toast("Delete canceled");
+      }
+    });
 };
 
+      if(!address)
+      return <FallbackAddress/>
 
-
-   if(isLoading)
-      return (
-        <img src="/loaders/form_loader.gif" alt="Loading spinner" style={{ width: '100px' }}/>
-      );
+      if(isLoading)
+      return <FormSubmissionLoader/>
 
       if(error)
-       return (
-        <img src="/loaders/form_loader.gif" alt="Loading spinner" style={{ width: '100px' }}/>
-      );
+      return <Error/>
+
+
     
+
   return (
+
+    
     <div className="w-[75%] p-6">
 
       {/* Header */}
@@ -83,7 +84,6 @@ const handleRemove = (id: string) => {
             state={add.state}
             pincode={add.pincode}
             isHome={add.type === "home"}
-            onEdit={handleEdit}
             onRemove={handleRemove}
           />
         ))}
@@ -91,6 +91,9 @@ const handleRemove = (id: string) => {
 
       {/* Add New Address Form */}
       <AddNewAddressForm setIsOpen={setIsOpen} isOpen={isOpen} />
+
+
+  
 
       
     </div>

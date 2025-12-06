@@ -1,8 +1,7 @@
-
 import { useEditAddress } from '@/hooks/useUser';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -21,12 +20,20 @@ interface EditAddressFormProps {
   id: string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  existingAddress?: {
+    postCode: string;
+    state: string;
+    cityTown: string;
+    address1: string;
+    landmark: string;
+  };
 }
 
 export default function EditAddressForm({
-  id,
   isOpen,
   setIsOpen,
+  id,
+  existingAddress
 }: EditAddressFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -35,6 +42,7 @@ export default function EditAddressForm({
     handleSubmit,
     formState: { errors },
     trigger,
+    reset
   } = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
@@ -46,6 +54,21 @@ export default function EditAddressForm({
       makeDefault: false
     }
   });
+
+  // Reset form when modal opens with existing data
+  useEffect(() => {
+    if (isOpen && existingAddress) {
+      reset({
+        postCode: existingAddress.postCode,
+        state: existingAddress.state,
+        cityTown: existingAddress.cityTown,
+        address1: existingAddress.address1,
+        landmark: existingAddress.landmark,
+        makeDefault: false
+      });
+      setCurrentStep(1); // Reset to step 1 when opening
+    }
+  }, [isOpen, existingAddress, reset]);
 
   const nextStep = async () => {
     let fieldsToValidate: (keyof AddressFormData)[] = [];
@@ -67,11 +90,11 @@ export default function EditAddressForm({
   const address = useEditAddress();
 
   const onSubmit = (data: AddressFormData) => {
-    console.log('Form submitted:', data);
+    console.log('Form submitted:', id);
 
     address.mutate(
       {
-        id:id,
+        id: id,
         landmark: data.landmark,
         state: data.state,
         city: data.cityTown,
@@ -82,11 +105,33 @@ export default function EditAddressForm({
         onSuccess: (data) => {
           console.log('Address updated', data);
           setIsOpen(false);
+          setCurrentStep(1); // Reset step after successful update
         },
         onError: (error) =>
           console.error(`Failed to update address: ${error}`),
       }
     );
+  };
+
+  const handleCancel = () => {
+    // Reset form to original values
+    if (existingAddress) {
+      reset({
+        postCode: existingAddress.postCode,
+        state: existingAddress.state,
+        cityTown: existingAddress.cityTown,
+        address1: existingAddress.address1,
+        landmark: existingAddress.landmark,
+        makeDefault: false
+      });
+    }
+    setCurrentStep(1); // Reset to step 1
+    setIsOpen(false); // Close modal
+  };
+
+  const handleClose = () => {
+    // Same behavior as cancel
+    handleCancel();
   };
 
   return (
@@ -98,7 +143,7 @@ export default function EditAddressForm({
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-xl font-semibold text-gray-800">Edit Address</h2>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 className="text-gray-400 hover:text-gray-600"
               >
                 <X size={24} />
@@ -229,7 +274,7 @@ export default function EditAddressForm({
                     <div className="space-x-3">
                       <button
                         type="button"
-                        onClick={() => setIsOpen(false)}
+                        onClick={handleCancel}
                         className="text-red-600 px-6 py-2 hover:bg-gray-50 transition-colors"
                       >
                         CANCEL
